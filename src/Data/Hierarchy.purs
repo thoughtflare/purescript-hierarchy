@@ -40,4 +40,5 @@ foldDo :: forall a b .
 foldDo g b (Cont x xs) Nothing _  = g b x
 foldDo g b (Cont x xs) (Just (Cont x1 x1s)) (Just tl) =
   foldl g (g b x) (Cont x1 (x1s `append` tl))
-foldDo _ b _ _ _ = b
+foldDo g b (Cont x xs) (Just f1) Nothing =
+  foldl g (g b x) f1
