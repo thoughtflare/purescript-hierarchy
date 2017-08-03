@@ -1,4 +1,4 @@
-module Data.Hierarchy (Hierarchy(..)) where
+module Data.Hierarchy (Hierarchy(..), foldTill) where
 
 import Data.Argonaut.Decode (class DecodeJson)
 import Data.Argonaut.Decode.Generic (gDecodeJson)
