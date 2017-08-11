@@ -5,11 +5,11 @@ import Data.Argonaut.Decode.Generic (gDecodeJson)
 import Data.Argonaut.Encode (class EncodeJson)
 import Data.Argonaut.Encode.Generic (gEncodeJson)
 import Data.Array (head, init, last, tail)
-import Data.Foldable (class Foldable, foldMapDefaultL, foldl)
+import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Generic (class Generic, gShow)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..), fst, snd)
-import Prelude (class Functor, class Show, append, flip, map, ($), (<<<))
+import Prelude (class Functor, class Show, append, flip, map, ($))
 
 data Hierarchy a = Cont a (Array (Hierarchy a))
 
