@@ -13,7 +13,7 @@ import Prelude (Unit, show, ($), (<<<))
 main :: forall e. Eff (console :: CONSOLE | e) Unit
 main = do
 --  (log <<< show <<< map length) $ Cont "Hello" [Cont "world!" []]
-  (log <<< show) $ at (fj $ insert h "Mtg" [standard]) "Mtg"
+  (log <<< show) $ at (insert h "Mtg" [standard]) "Mtg"
 
 fj :: forall a. Maybe a -> a
 fj x = unsafePartial (fromJust x)
