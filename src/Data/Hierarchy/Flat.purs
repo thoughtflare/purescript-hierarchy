@@ -66,24 +66,30 @@ insert' h x hs = let
   in
    if h /= ok then Just ok else Nothing
 
-update :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Hierarchy a
-update h@(Cont _ []) _ _ = h
-update h@(Cont v vs) x hs
+update :: forall a. Generic a => Eq a => Ord a => Hierarchy a -> a -> Array (Hierarchy a) -> Hierarchy a
+update h x y = let
+  ok = updateImpl h x y
+  in
+   if isFlat ok then ok else h
+
+updateImpl :: forall a. Generic a => Eq a => Ord a => Hierarchy a -> a -> Array (Hierarchy a) -> Hierarchy a
+updateImpl h@(Cont _ []) _ _ = h
+updateImpl h@(Cont v vs) x hs
   | v == x    = (Cont v hs)
   | otherwise = Cont v (map updateDo vs)
   where
-    updateDo h1 = update h1 x hs
+    updateDo h1 = updateImpl h1 x hs
 
-updatev :: forall a. Generic a => Eq a => Hierarchy a -> a -> a -> Hierarchy a
+updatev :: forall a. Generic a => Eq a => Ord a => Hierarchy a -> a -> a -> Hierarchy a
 updatev h x y = update h x [(mkFlat y)]
 
-update' :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Maybe (Hierarchy a)
+update' :: forall a. Generic a => Eq a => Ord a => Hierarchy a -> a -> Array (Hierarchy a) -> Maybe (Hierarchy a)
 update' h x y = let
   ok = update h x y
   in
    if h /= ok then Just ok else Nothing
 
-updatev' :: forall a. Generic a => Eq a => Hierarchy a -> a -> a -> Maybe (Hierarchy a)
+updatev' :: forall a. Generic a => Eq a => Ord a => Hierarchy a -> a -> a -> Maybe (Hierarchy a)
 updatev' h x y = update' h x [(mkFlat y)]
 
 delete :: forall a. Generic a => Eq a => Hierarchy a -> a -> Hierarchy a
