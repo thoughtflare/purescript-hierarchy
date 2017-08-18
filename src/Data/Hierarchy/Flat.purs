@@ -1,6 +1,12 @@
-module Data.Hierarchy.Flat (mkFlat, at, insert, insertv)
+module Data.Hierarchy.Flat ( mkFlat, at
+                           , insert, insertv
+                           , insert', insertv'
+                           , update, updatev
+                           , update', updatev'
+                           , delete )
        where
 
+import Data.Array (filter)
 import Data.Generic (class Generic)
 import Data.Hierarchy (Hierarchy(..), foldTill)
 import Data.Maybe (Maybe(..))
@@ -30,20 +36,38 @@ insertv :: forall a. Generic a => Eq a => Hierarchy a -> a -> a -> Hierarchy a
 insertv h x y = insert h x [(mkFlat y)]
 
 insert :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Hierarchy a
-insert h@(Cont _ []) _ _= h
+insert h@(Cont _ []) _ _ = h
 insert h@(Cont v vs) x hs
   | v == x    = Cont v (vs `append` hs)
   | otherwise = Cont v (map insertDo vs)
   where
     insertDo h1 = insert h1 x hs
 
-update :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Maybe (Hierarchy a)
-update h x hs = let
-  ok = insertDo h
+update :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Hierarchy a
+update h@(Cont _ []) _ _ = h
+update h@(Cont v vs) x hs
+  | v == x    = (Cont v hs)
+  | otherwise = Cont v (map updateDo vs)
+  where
+    updateDo h1 = update h1 x hs
+
+updatev :: forall a. Generic a => Eq a => Hierarchy a -> a -> a -> Hierarchy a
+updatev h x y = update h x [(mkFlat y)]
+
+update' :: forall a. Generic a => Eq a => Hierarchy a -> a -> Array (Hierarchy a) -> Maybe (Hierarchy a)
+update' h x y = let
+  ok = update h x y
   in
    if h /= ok then Just ok else Nothing
+
+updatev' :: forall a. Generic a => Eq a => Hierarchy a -> a -> a -> Maybe (Hierarchy a)
+updatev' h x y = update' h x [(mkFlat y)]
+
+delete :: forall a. Generic a => Eq a => Hierarchy a -> a -> Hierarchy a
+delete h@(Cont _ []) _ = h
+delete h@(Cont v vs) x = Cont v $ map deleteDo (filter neq vs)
   where
-    insertDo h1@(Cont _ []) = h1
-    insertDo h1@(Cont v vs)
-      | v == x    = Cont v (vs `append` hs)
-      | otherwise = Cont v (map insertDo vs)
+    neq (Cont v vs)
+      | v == x    = false
+      | otherwise = true 
+    deleteDo h1 = delete h1 x
