@@ -1,11 +1,11 @@
-module Data.Hierarchy (Hierarchy(..), foldTill) where
+module Data.Hierarchy (Hierarchy(..), foldTill, toArray) where
 
 import Data.Argonaut.Decode (class DecodeJson)
 import Data.Argonaut.Decode.Generic (gDecodeJson)
 import Data.Argonaut.Encode (class EncodeJson)
 import Data.Argonaut.Encode.Generic (gEncodeJson)
-import Data.Array (head, tail)
-import Data.Foldable (class Foldable, foldMapDefaultL)
+import Data.Array (head, tail, (:))
+import Data.Foldable (class Foldable, foldMapDefaultL, foldr)
 import Data.Generic (class Generic, gEq, gShow)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..), fst, snd)
@@ -25,6 +25,9 @@ data Hierarchy a = Cont a (Array (Hierarchy a))
 foldSnd :: forall a b c . a -> (c -> b -> c) -> (Tuple a c -> b -> Tuple a c)
 foldSnd x f y z = Tuple x (f (snd y) z)
 
+-- | Folds Hierarchy into an Array.
+toArray :: forall a. Hierarchy a -> Array a
+toArray = foldr (:) []
 
 -- | A function that folds while the first element in the
 -- accumulator tuple is `true`. When the first element in the

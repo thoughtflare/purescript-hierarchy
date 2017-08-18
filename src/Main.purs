@@ -4,7 +4,7 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Functor (map)
 import Data.Hierarchy (Hierarchy(..))
-import Data.Hierarchy.Flat (at, insert, delete)
+import Data.Hierarchy.Flat (at, insert, delete, insertv)
 import Data.Maybe (Maybe, fromJust)
 import Data.String (length)
 import Partial.Unsafe (unsafePartial)
@@ -14,7 +14,8 @@ main :: forall e. Eff (console :: CONSOLE | e) Unit
 main = do
 --  (log <<< show <<< map length) $ Cont "Hello" [Cont "world!" []]
 --  (log <<< show) $ at (insert h "Mtg" [standard]) "Mtg"
-  (log <<< show) $ delete h "StarCraft"
+  (log <<< show) $ insertv h "Misc" "Mtg"
+--  (log <<< show) $ delete h "StarCraft"
 
 fj :: forall a. Maybe a -> a
 fj x = unsafePartial (fromJust x)
@@ -31,7 +32,8 @@ h = Cont "Learning"
         , Cont "Affinity" [] ]
       , Cont "Limited"
         [ Cont "Sealed" []
-        , Cont "Draft" [] ] ] ]
+        , Cont "Draft" [] ] ]
+    , Cont "Misc" [] ]
 
 standard :: Hierarchy String
 standard = Cont "Standard"
