@@ -21,7 +21,17 @@ data Hierarchy a = Cont a (Array (Hierarchy a))
 -- step (`c -> b -> c`), taking initial value for `c` from the first tuple,
 -- while keeping the first element of the Tuple (`a`) constant.
 --
--- Drugs are bad, mmkay?
+-- Observe that this function allows overwriting the first element in the
+-- tuple `y` with its first argument `a`. Also, the rightmost parenthesis
+-- are matched in the function head with `y :: Tuple a c` and `z :: b`.
+--
+-- A less generic implementation of this function that just makes a folding
+-- step in the second element of a Tuple would have been:
+--
+-- ```
+-- foldSnd' :: forall a b c . (c -> b -> c) -> Tuple a c -> b -> Tuple a c
+-- foldSnd' f tup val = Tuple (fst tup) (f (snd tup) val)
+-- ```
 foldSnd :: forall a b c . a -> (c -> b -> c) -> (Tuple a c -> b -> Tuple a c)
 foldSnd x f y z = Tuple x (f (snd y) z)
 
